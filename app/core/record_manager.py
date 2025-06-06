@@ -269,7 +269,7 @@ class RecordingManager:
                 recording.title = f"{recording.streamer_name} - {self._[recording.quality]}"
                 recording.display_title = f"[{self._['is_live']}] {recording.title}"
 
-                if self.settings.user_config["stream_start_notification_enabled"] or recording.enabled_message_push:
+                if self.settings.user_config["stream_start_notification_enabled"] and recording.enabled_message_push:
                     push_content = self._["push_content"]
                     begin_push_message_text = self.settings.user_config.get("custom_stream_start_content")
                     if begin_push_message_text:
