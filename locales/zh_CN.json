@@ -76,6 +76,7 @@
     "live_room": "直播间",
     "recorded": "已录制",
     "push_content": "直播间状态更新：[room_name] 正在直播中，时间：[time]",
+    "push_content_end": "直播间状态更新：[room_name] 直播已结束，时间：[time]",
     "status_notify": "直播间状态更新通知",
     "platform_not_supported_tip": "暂不支持该平台录制",
     "STOPPED_MONITORING": "直播间已停止监控",
