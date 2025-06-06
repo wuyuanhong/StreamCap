@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 from typing import Any
 
+from ..messages.message_pusher import MessagePusher
 from ..models.recording_status_model import RecordingStatus
 from ..models.video_quality_model import VideoQuality
 from ..process_manager import BackgroundService
@@ -13,7 +14,7 @@ from ..utils import utils
 from ..utils.logger import logger
 from . import ffmpeg_builders, platform_handlers
 from .platform_handlers import StreamData
-from ..messages.message_pusher import MessagePusher
+
 
 class LiveStreamRecorder:
     DEFAULT_SEGMENT_TIME = "1800"
@@ -264,7 +265,8 @@ class LiveStreamRecorder:
                 else:
                     self.recording.recording = False
                     logger.success(f"Live recording completed: {record_name}")
-                    if self.settings.user_config["stream_end_notification_enabled"] and self.recording.enabled_message_push:
+                    if (self.settings.user_config["stream_end_notification_enabled"] 
+                            and self.recording.enabled_message_push):
                         push_content = self._["push_content_end"]
                         end_push_message_text = self.settings.user_config.get("custom_stream_end_content")
                         if end_push_message_text:
