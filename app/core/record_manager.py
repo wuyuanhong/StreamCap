@@ -139,6 +139,7 @@ class RecordingManager:
         pre_start_monitor_recordings = selected_recordings if selected_recordings else self.recordings
         cards_obj = self.app.record_card_manager.cards_obj
         for recording in pre_start_monitor_recordings:
+            recording.manually_stopped = False
             if cards_obj[recording.rec_id]["card"].visible:
                 self.app.page.run_task(self.start_monitor_recording, recording, auto_save=False)
         self.app.page.run_task(self.persist_recordings)
@@ -201,6 +202,8 @@ class RecordingManager:
         """Check if the live stream is available, fetch stream data and update is_live status."""
 
         if recording.recording:
+            return
+        if recording.manually_stopped:
             return
 
         if not recording.monitor_status:

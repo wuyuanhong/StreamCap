@@ -293,6 +293,7 @@ class RecordingCardManager:
                     "monitor_status": not recording.monitor_status,
                     "status_info": RecordingStatus.STOPPED_MONITORING,
                     "display_title": f"[{self._['monitor_stopped']}] {recording.title}",
+                    "manually_stopped": False,
                 }
             )
             self.app.record_manager.stop_recording(recording, manually_stopped=True)
