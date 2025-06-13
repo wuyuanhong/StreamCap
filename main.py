@@ -133,7 +133,7 @@ async def main(page: ft.Page) -> None:
         app.auth_manager = auth_manager
         await auth_manager.initialize()
         
-        login_required = app.settings.get_config_value("login_required", True)
+        login_required = app.settings.get_config_value("login_required", False)
         
         if login_required:
             session_token = await page.client_storage.get_async("session_token")

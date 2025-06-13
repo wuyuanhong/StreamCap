@@ -1181,7 +1181,7 @@ class SettingsPage(PageBase):
         )
         
         login_required_switch = ft.Switch(
-            value=self.get_config_value("login_required", True),
+            value=self.get_config_value("login_required", False),
             on_change=toggle_login_required,
         )
         

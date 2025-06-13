@@ -263,13 +263,13 @@ class LiveStreamRecorder:
                 if not self.recording.is_recording:
                     logger.success(f"Live recording has stopped: {record_name}")
                 else:
-                    self.recording.is_recording = False
+                    
                     logger.success(f"Live recording completed: {record_name}")
                     msg_manager = MessagePusher(self.settings)
                     user_config = self.settings.user_config
                     
                     if self.app.recording_enabled and MessagePusher.should_push_message(
-                            self.settings, self.recording, check_manually_stopped=True):
+                            self.settings, self.recording, check_manually_stopped=True, message_type='end'):
                         push_content = self._["push_content_end"]
                         end_push_message_text = user_config.get("custom_stream_end_content")
                         if end_push_message_text:
@@ -283,6 +283,8 @@ class LiveStreamRecorder:
                         msg_title = msg_title or self._["status_notify"]
 
                         self.app.page.run_task(msg_manager.push_messages, msg_title, push_content)
+
+                    self.recording.is_recording = False
                 try:
                     self.recording.update({"display_title": display_title})
                     await self.app.record_card_manager.update_card(self.recording)

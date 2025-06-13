@@ -262,7 +262,6 @@ class RecordingManager:
                 stream_info.anchor_name = utils.clean_name(stream_info.anchor_name, self._["live_room"])
 
             recording.is_live = stream_info.is_live
-            is_record = True
             if recording.is_live and not recording.is_recording:
                 recording.status_info = RecordingStatus.PREPARING_RECORDING
                 recording.live_title = stream_info.title
@@ -273,7 +272,7 @@ class RecordingManager:
 
                 msg_manager = MessagePusher(self.settings)
                 user_config = self.settings.user_config
-                if MessagePusher.should_push_message(self.settings, recording):
+                if MessagePusher.should_push_message(self.settings, recording, message_type='start'):
                     push_content = self._["push_content"]
                     begin_push_message_text = user_config.get("custom_stream_start_content")
                     if begin_push_message_text:
@@ -288,17 +287,14 @@ class RecordingManager:
 
                     self.app.page.run_task(msg_manager.push_messages, msg_title, push_content)
 
-                    if user_config.get("only_notify_no_record"):
-                        notify_loop_time = user_config.get("notify_loop_time")
-                        recording.loop_time_seconds = int(notify_loop_time or 3600)
-                        is_record = False
-                    else:
-                        recording.loop_time_seconds = self.loop_time_seconds
-
-                if is_record:
+                if not user_config.get("only_notify_no_record"):
+                    recording.loop_time_seconds = self.loop_time_seconds
                     self.start_update(recording)
                     self.app.page.run_task(recorder.start_recording, stream_info)
                 else:
+                    notify_loop_time = user_config.get("notify_loop_time")
+                    recording.loop_time_seconds = int(notify_loop_time or 3600)
+                    recording.status_info = RecordingStatus.NOT_RECORDING
                     recording.is_checking = False
 
                 self.app.page.run_task(self.app.record_card_manager.update_card, recording)

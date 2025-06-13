@@ -24,7 +24,7 @@ class MessagePusher:
         return any(self.settings.user_config.get(channel) for channel in push_channels)
 
     @staticmethod
-    def should_push_message(settings, recording, check_manually_stopped=False):
+    def should_push_message(settings, recording, check_manually_stopped=False, message_type=None):
         """
         Check if message should be pushed
         """
@@ -32,18 +32,25 @@ class MessagePusher:
             return False
             
         user_config = settings.user_config
+        should_only_notify_no_record = user_config.get("only_notify_no_record")
+        is_stream_start_enabled = user_config.get("stream_start_notification_enabled")
+        is_stream_end_enabled = user_config.get("stream_end_notification_enabled")
         
-        # Check if global push settings are enabled
-        global_push_enabled = (
-            user_config.get("stream_start_notification_enabled") or 
-            user_config.get("stream_end_notification_enabled") or 
-            user_config.get("only_notify_no_record")
-        )
-        
-        if not global_push_enabled:
+        if message_type is None:
+            if hasattr(recording, 'is_recording') and recording.is_recording:
+                message_type = 'end'
+            else:
+                message_type = 'start'
+
+        if message_type == 'start' and should_only_notify_no_record and is_stream_start_enabled:
+            return True
+
+        if message_type == 'start' and not is_stream_start_enabled:
             return False
-            
-        # Check if any push platform is enabled
+        
+        if message_type == 'end' and not is_stream_end_enabled:
+            return False
+
         push_channels = [
             "dingtalk_enabled",
             "wechat_enabled",
@@ -59,10 +66,8 @@ class MessagePusher:
         if not any_channel_enabled:
             return False
             
-        # Check if manually stopped status is needed
-        if check_manually_stopped and recording.manually_stopped:
+        if message_type == 'end' and check_manually_stopped and recording.manually_stopped:
             return False
-            
         return True
 
     async def push_messages(self, msg_title: str, push_content: str):
