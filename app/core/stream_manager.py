@@ -74,7 +74,27 @@ class LiveStreamRecorder:
             stream_info.anchor_name = utils.clean_name(stream_info.anchor_name, self._["live_room"])
 
         now = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
-        full_filename = "_".join([i for i in (stream_info.anchor_name, live_title, now) if i])
+        
+        custom_template = self.user_config.get("custom_filename_template")
+        if custom_template:
+            filename = custom_template
+            filename = filename.replace("{anchor_name}", stream_info.anchor_name or "")
+            filename = filename.replace("{title}", live_title or "")
+            filename = filename.replace("{time}", now)
+            filename = filename.replace("{platform}", stream_info.platform or "")
+            
+            while "__" in filename:
+                filename = filename.replace("__", "_")
+                
+            filename = filename.strip("_")
+            
+            if not filename:
+                full_filename = "_".join([i for i in (stream_info.anchor_name, live_title, now) if i])
+            else:
+                full_filename = filename
+        else:
+            full_filename = "_".join([i for i in (stream_info.anchor_name, live_title, now) if i])
+            
         return full_filename
 
     def _get_output_dir(self, stream_info: StreamData) -> str:

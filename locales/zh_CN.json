@@ -156,6 +156,7 @@
     "restore_defaults": "恢复默认设置",
     "program_language": "程序语言",
     "filename_includes_title": "文件名包含标题",
+    "custom_filename_template": "自定义文件名模板",
     "live_recording_path": "直播录制保存路径",
     "blank_for_default_path": "不填则默认",
     "remove_emojis": "去除emoji符号",

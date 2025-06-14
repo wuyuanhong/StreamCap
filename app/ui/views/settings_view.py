@@ -247,6 +247,16 @@ class SettingsPage(PageBase):
                                 data="filename_includes_title",
                             ),
                         ),
+                        self.create_setting_row(
+                            self._["custom_filename_template"],
+                            ft.TextField(
+                                value=self.get_config_value("custom_filename_template", "{anchor_name}_{title}_{time}"),
+                                width=300,
+                                on_change=self.on_change,
+                                data="custom_filename_template",
+                                hint_text="{anchor_name}_{title}_{time}",
+                            ),
+                        ),
                         self.pick_folder(
                             self._["live_recording_path"],
                             ft.TextField(
